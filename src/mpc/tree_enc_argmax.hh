@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <functional>
 #include <math/util_gmp_rand.h>
+#include <util/benchmarks.hh>
 
 using namespace  std;
 

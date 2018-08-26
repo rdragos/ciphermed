@@ -96,18 +96,19 @@ static void bench_linear_classifier_client(const string &hostname, unsigned int 
         
         srand(time(NULL));
         
-//        assert(nbits_max > model_size + 1);
+        assert(nbits_max > model_size + 1);
         unsigned int nbits = nbits_max - model_size - 1;
-        long two_nbits = 1 << nbits;
+        long two_nbits = 1LL << 2;
         
-        vector<mpz_class> values(model_size);
-        for (size_t i = 0; i < model_size; i++) {
-            values[i] = rand()%two_nbits;
-            if (rand()%2) {
-                values[i] *= -1;
-            }
-        }
-        
+        vector<mpz_class> values(model_size, 0);
+
+        // for (size_t i = 0; i < model_size; i++) {
+        //     values[i] = rand()%two_nbits;
+        //     if (rand()%2) {
+        //         values[i] *= -1;
+        //     }
+        // }
+        values[0] = 10;
         Bench_Linear_Classifier_Client client(io_service, randstate,1024,100,values,nbits_max, nRounds);
         
         client.connect(io_service, hostname);

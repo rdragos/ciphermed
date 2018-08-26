@@ -200,6 +200,9 @@ bool Naive_Bayes_Classifier_Client::run()
     unsigned int cat_count = cat_prob.size();
     t = new ScopedTimer("Argmax");
     
+    for (size_t k = 0; k < cat_prob.size(); ++k) {
+        cout << "cat_prob: " << cat_prob[k] << endl;
+    }
     Tree_EncArgmax_Owner owner(cat_prob,54+cat_count,*server_paillier_,rand_state_, lambda_);
     run_tree_enc_argmax(owner,comparison_prot__);
 

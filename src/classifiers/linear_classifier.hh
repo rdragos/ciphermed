@@ -44,7 +44,7 @@ class  Linear_Classifier_Server : public Server{
     
     static Key_dependencies_descriptor key_deps_descriptor()
     {
-        return Key_dependencies_descriptor(false,true,false,true,true,false);
+        return Key_dependencies_descriptor(true,true,true,true,true,true);
     }
 
     protected:
@@ -91,7 +91,7 @@ public:
     
     static Key_dependencies_descriptor key_deps_descriptor()
     {
-        return Key_dependencies_descriptor(false,true,false,true,true,false);
+        return Key_dependencies_descriptor(true,true,true,true,true,true);
     }
     
 protected:

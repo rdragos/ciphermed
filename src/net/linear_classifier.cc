@@ -3,12 +3,14 @@
 #include <mpc/enc_comparison.hh>
 #include <mpc/rev_enc_comparison.hh>
 #include <mpc/linear_enc_argmax.hh>
+#include <mpc/tree_enc_argmax.hh>
 
 #include <net/linear_classifier.hh>
 
 #include <protobuf/protobuf_conversion.hh>
 #include <net/message_io.hh>
 
+static const COMPARISON_PROTOCOL comparison_prot__ = GC_PROTOCOL;
 
 
 Linear_Classifier_Server::Linear_Classifier_Server(gmp_randstate_t state, unsigned int keysize, unsigned int lambda, const vector<mpz_class> &model, size_t bit_size)
@@ -66,18 +68,20 @@ bool Linear_Classifier_Client::run()
     // get the model
     get_model();
     
-    // compute the encrypted dot product
-    mpz_class v = 1;
-    
-    for (size_t i = 0; i < values_.size(); i++) {
-        v = server_paillier_->add(v, server_paillier_->constMult(values_[i],model_[i]));
+    // compute the encrypted dot product 
+
+    vector<mpz_class> v(model_.size(), 1);
+    for (size_t j = 0; j < model_.size(); j++) {
+        for (size_t i = 0; i < values_.size(); i++) {
+            v[j] = server_paillier_->add(v[j], server_paillier_->constMult(values_[i],model_[j][i]));
+        }
     }
-    
-    // build the comparator over encrypted data
-    EncCompare_Owner owner = create_enc_comparator_owner(bit_size_,false);
-    owner.set_input(v, model_[model_.size()-1]);
-    
-    bool result = run_enc_comparison(owner);
-    
+
+    Tree_EncArgmax_Owner owner(v,54+model_.size(),*server_paillier_,rand_state_, lambda_);
+    run_tree_enc_argmax(owner,comparison_prot__);
+
+//    Linear_EncArgmax_Owner owner(cat_prob,54+features_count,*server_paillier_,rand_state_, lambda_);
+//    run_linear_enc_argmax(owner,comparison_prot__);
+
     return result;
 }

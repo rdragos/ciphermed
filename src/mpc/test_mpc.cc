@@ -437,7 +437,7 @@ static void test_tree_enc_argmax(unsigned int k = 5, unsigned int nbits = 256,un
     timer_exec = new ScopedTimer("Protocol execution");
     
     runProtocol(client,server,party_a_creator, party_b_creator, randstate,lambda);
-    
+
     delete timer_exec;
     
     vector<mpz_class>::iterator argmax;
@@ -561,8 +561,9 @@ int main(int argc, char **argv)
 //    test_lsic(l);
 //    test_compare(l);
     
-    for (int i = 0; i < 1; i++) {
-        test_gc(l);
+    for (int i = 0; i < 10; i++) {
+        // test_gc(l);
+        test_tree_enc_argmax(n,l,lambda);
         cout << "\n\n";
     }
     
@@ -576,7 +577,6 @@ int main(int argc, char **argv)
 //    cout << "\n\n";
 //    test_linear_enc_argmax(n,l,lambda);
 //    cout << "\n\n";
-//    test_tree_enc_argmax(n,l,lambda);
 //   
 //    cout << "\n\n";
 //    test_change_ES();

@@ -32,9 +32,9 @@ struct security_parameters {
 //#include <openssl/aes.h>
 
 #define AES_KEY_CTX EVP_CIPHER_CTX
-#define HASH_INIT(sha) SHA_Init(sha)
-#define HASH_UPDATE(sha, buf, bufsize) SHA_Update(sha, buf, bufsize)
-#define HASH_FINAL(sha, sha_buf) SHA_Final(sha_buf, sha)
+#define HASH_INIT(sha) SHA1_Init(sha)
+#define HASH_UPDATE(sha, buf, bufsize) SHA1_Update(sha, buf, bufsize)
+#define HASH_FINAL(sha, sha_buf) SHA1_Final(sha_buf, sha)
 
 #define SHA1_BYTES				20
 

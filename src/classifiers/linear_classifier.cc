@@ -30,6 +30,7 @@
 #include <net/message_io.hh>
 #include <util/util.hh>
 
+static const COMPARISON_PROTOCOL comparison_prot__ = GC_PROTOCOL;
 
 Linear_Classifier_Server::Linear_Classifier_Server(gmp_randstate_t state, unsigned int keysize, unsigned int lambda, const vector<mpz_class> &model, size_t bit_size)
 : Server(state, Linear_Classifier_Server::key_deps_descriptor(), keysize, lambda), enc_model_(model.size()), bit_size_(bit_size)
@@ -138,12 +139,20 @@ void Bench_Linear_Classifier_Server_session::run_session()
         
         double server_time = 0.;
         unsigned int nRounds = linear_server_->nRounds();
+        size_t n_classes = 10;
+
         for (unsigned int i = 0; i < nRounds; i++) {
             RESET_BENCHMARK_TIMER
-            
-            help_compute_dot_product(linear_server_->enc_model(),true);
-            
-            help_enc_comparison(linear_server_->bit_size(), GC_PROTOCOL);
+
+            for (size_t k = 0; k < n_classes; ++k) {
+                help_compute_dot_product(linear_server_->enc_model(),true);
+            }
+
+            Tree_EncArgmax_Helper helper(100,n_classes,server_->paillier());
+            run_tree_enc_argmax(helper,comparison_prot__);
+        
+            // no more comparison, just dot product 
+            // help_enc_comparison(linear_server_->bit_size(), GC_PROTOCOL);
             
             server_time += GET_BENCHMARK_TIME;
 //            cout << "Round #" << i << " done" << endl;
@@ -177,12 +186,12 @@ void Bench_Linear_Classifier_Client::run()
     cout << "Key exchange: " <<  (IOBenchmark::byte_count()/to_kB) << " kB" << endl;
     cout << IOBenchmark::interaction_count() << " interactions" << endl;
 #endif
-    bool firstResult;
+    mpz_class firstResult;
     double compare_time = 0., dot_prod_time = 0., client_time = 0.;
     Timer t;
 
     RESET_BYTE_COUNT
-
+    size_t n_classes = 10;
     for (unsigned int i = 0; i < nRounds_; i++) {
 
         RESET_BENCHMARK_TIMER
@@ -193,23 +202,34 @@ void Bench_Linear_Classifier_Client::run()
         t.lap(); // reset timer
         
         // compute the dot product
-        mpz_class v = compute_dot_product(x);
-        mpz_class w = 1; // encryption of 0
-        
+        vector<mpz_class> v(n_classes);
+
+        for (size_t k = 0; k < n_classes; ++k) {
+            if (k == 4) v[k] = compute_dot_product(x);
+            else {
+                // this makes sure that argmax is on position 4;
+                // otherwise there are multiple positions equally qualified for argmax
+                compute_dot_product(x);
+                v[k] = server_paillier_->encrypt(1);
+            }
+        }
+
         dot_prod_time += t.lap_ms();
-        // build the comparator over encrypted data
-        bool result = enc_comparison(v,w,bit_size_,GC_PROTOCOL);
+
+        Tree_EncArgmax_Owner owner(v,100,*server_paillier_,rand_state_, lambda_);
+        mpz_class result = run_tree_enc_argmax(owner,comparison_prot__);
+
+
         compare_time += t.lap_ms();
 
         client_time += GET_BENCHMARK_TIME;
-
         if (i == 0) {
             firstResult = result;
-        }else{
+        }
+        else{
             assert(firstResult == result);
         }
-
-//        cout << "Round #" << i << " done" << endl;
+       // cout << "Round #" << i << " done" << endl;
 
     }
 #ifdef BENCHMARK

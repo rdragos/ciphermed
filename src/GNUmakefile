@@ -1,14 +1,14 @@
 -include config.mk
 
-SHAIFHEPATH ?= $(HOME)/HElib/src
-NTLLIBPATH ?= $(HOME)/ntl-6.0.0-bin/lib
-NTLINCPATH ?= $(HOME)/ntl-6.0.0-bin/include
+SHAIFHEPATH ?= /home/dragos/open_source/HElib/src/
+NTLLIBPATH ?= /home/dragos/.local/ntl/lib/
+NTLINCPATH ?= /home/dragos/.local/ntl/include/
 JSONCPP ?= /usr/include/jsoncpp
 
 L_BOOST_SYSTEM ?= -lboost_system
 L_BOOST_THREAD ?= -lboost_thread
 
-DEBUG ?= 0
+DEBUG ?= 1
 BENCHMARK ?= 1
 
 ifeq ($(strip $(DEBUG)),1)
@@ -35,7 +35,7 @@ CXXFLAGS := $(CXXOPT) -fno-strict-aliasing -fwrapv -fPIC \
 	    -fno-omit-frame-pointer -I$(TOP) -I$(SHAIFHEPATH) -I$(NTLINCPATH) -I$(JSONCPP)
 
 
-LDFLAGS	 := -lpthread -lrt -lgmp -lgmpxx -lgf2x
+LDFLAGS	 := -pthread -lpthread -lrt -lgmp -lgmpxx -lgf2x
 LDFLAGS +=  -L$(TOP)/$(OBJDIR) -Wl,-rpath=$(TOP)/$(OBJDIR)
 
 PROTOC ?= protoc

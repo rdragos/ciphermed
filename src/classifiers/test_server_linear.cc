@@ -109,16 +109,23 @@ static void bench_linear_classifier_server(unsigned int model_size, unsigned int
     assert(nbits_max > model_size + 1);
     unsigned int nbits = nbits_max - model_size - 1;
     
-    long two_nbits = (1 << nbits);
+    long two_nbits = (1 << 2);
     
-    vector<mpz_class> model(model_size+1);
-    for (size_t i = 0; i <= model_size; i++) {
-        model[i] = rand()%two_nbits;
-        if (rand()%2) {
-            model[i] *= -1;
-        }
+    cout << "server model: " << endl;
+    vector<mpz_class> model(model_size, 0);
+    model[0] = 1;
+    // for (size_t i = 0; i <= model_size; i++) {
+    //     model[i] = rand()%two_nbits;
+    //     if (rand()%2) {
+    //         model[i] *= -1;
+    //     }
+    //     cout << model[i] << " " ;
+    // }
+    for (size_t i = 0; i < model_size; ++i) {
+        cout << model[i] << " " ;
     }
-    
+
+
     bench_linear_classifier_server(model, nbits_max, nRounds);
 }
 

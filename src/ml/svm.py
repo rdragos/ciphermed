@@ -24,7 +24,7 @@ if __name__ == '__main__':
     ]
 
     clf = grid_search.GridSearchCV(
-        svm.LinearSVC(class_weight='auto'),
+        svm.LinearSVC(),
         c_params)
     clf.fit(X_train, Y_train)
 

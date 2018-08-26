@@ -653,7 +653,6 @@ mpz_class exec_compute_dot_product(tcp::socket &socket, const vector<mpz_class> 
     for (size_t i = 0; i < y.size(); i++) {
         v = p.add(v, p.constMult(x[i],y[i]));
     }
-
     return v;
 }
 
@@ -671,6 +670,5 @@ void exec_help_compute_dot_product(tcp::socket &socket, const vector<mpz_class> 
             c_y[i] = pp.encrypt(y[i]);
         }
     }
-    
     send_int_array_to_socket(socket, c_y);
 }
