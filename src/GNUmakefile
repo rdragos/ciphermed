@@ -1,8 +1,8 @@
 -include config.mk
 
-SHAIFHEPATH ?= /home/dragos/open_source/HElib/src/
-NTLLIBPATH ?= /home/dragos/.local/ntl/lib/
-NTLINCPATH ?= /home/dragos/.local/ntl/include/
+SHAIFHEPATH ?= /home/drotaru/open_source/HElib/src/
+NTLLIBPATH ?= /home/drotaru/local/ntl/lib/
+NTLINCPATH ?= /home/drotaru/local/ntl/include/
 JSONCPP ?= /usr/include/jsoncpp
 
 L_BOOST_SYSTEM ?= -lboost_system
